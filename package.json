@@ -49,10 +49,11 @@
     "react-hook-form": "^7.62.0",
     "recharts": "2.15.4",
     "resend": "^6.0.0",
+    "slugify": "^1.6.6",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
-    "zod": "^4.0.15"
+    "zod": "^4.0.16"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
