@@ -24,7 +24,7 @@ export async function CreateCourse(values: CourseSchemaType): Promise<ApiRespons
         await prisma.course.create({
             data: {
                 ...validation.data,
-                userId: session?.user.id,
+                userId: session?.user.id as string,
             },
         });
 
