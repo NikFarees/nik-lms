@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { RenderEmptyState, RenderErrorState, RenderUploadedState, RenderUploadingState } from './RenderState';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
+import { on } from 'events';
 
 interface UploaderState {
     id: string | null;
@@ -25,6 +26,7 @@ interface iAppProps {
     onChange?: (value: string) => void;
 }
 
+// sini last berhenti (8.22.43 youtube masa last)
 export function Uploader({onChange, value} : iAppProps) {
 
     const [fileState, setFileState] = useState<UploaderState>({
@@ -34,7 +36,8 @@ export function Uploader({onChange, value} : iAppProps) {
         uploading: false,
         progress: 0,
         isDeleting: false,
-        fileType: "image"
+        fileType: "image",
+        key: value,
     });
 
     async function uploadFile(file: File) {
@@ -93,6 +96,8 @@ export function Uploader({onChange, value} : iAppProps) {
                             uploading: false,
                             key: key,
                         }));
+
+                        onChange?.(key);
 
                         toast.success("File uploaded successfully");
 
@@ -179,6 +184,8 @@ export function Uploader({onChange, value} : iAppProps) {
             if (fileState.objectURL && !fileState.objectURL.startsWith("http")) {
                 URL.revokeObjectURL(fileState.objectURL);
             }
+
+            onChange?.("");
 
             setFileState(() => ({
                 file: null,
