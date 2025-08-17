@@ -8,6 +8,7 @@ import { RenderEmptyState, RenderErrorState, RenderUploadedState, RenderUploadin
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
 import { on } from 'events';
+import { useConstructUrl } from '@/hooks/use-construct-url';
 
 interface UploaderState {
     id: string | null;
@@ -28,7 +29,7 @@ interface iAppProps {
 
 // sini last berhenti (8.22.43 youtube masa last)
 export function Uploader({onChange, value} : iAppProps) {
-
+    const fileUrl = useConstructUrl(value || "");
     const [fileState, setFileState] = useState<UploaderState>({
         error: false,
         file: null,
@@ -38,6 +39,7 @@ export function Uploader({onChange, value} : iAppProps) {
         isDeleting: false,
         fileType: "image",
         key: value,
+        objectURL: fileUrl,
     });
 
     async function uploadFile(file: File) {
