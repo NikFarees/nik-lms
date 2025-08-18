@@ -2,6 +2,7 @@ import "server-only";
 import { requireAdmin } from "./require-admin";
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
+import { Chapter } from '../../../lib/generated/prisma/index';
 
 export async function adminGetCourse(id: string) {
     await requireAdmin();
@@ -22,6 +23,24 @@ export async function adminGetCourse(id: string) {
             slug: true,
             smallDescription: true,
             category: true,
+            chapter: {
+                select: {
+                    id: true,
+                    title: true,
+                    position: true,
+                    lessons: {
+                        select: {
+                            id: true,
+                            title: true,
+                            description: true,
+                            thumbnailKey: true,
+                            position: true,
+                            videoKey: true,
+                        },
+                    },
+                },
+            },
+            
         },
     });
 
