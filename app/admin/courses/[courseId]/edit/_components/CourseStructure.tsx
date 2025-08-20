@@ -10,11 +10,11 @@ import { cn } from "@/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronRight, FileText, GripVertical, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { size } from 'zod';
 import Link from "next/link";
 import { toast } from "sonner";
 import { reorderChapters, reorderLessons } from "../action";
 import { NewChapterModal } from "./NewChapterModal";
+import { NewLessonModal } from "./NewLessonModal";
 
 interface iAppProps {
     data: AdminCourseSingularType
@@ -59,7 +59,7 @@ export function CourseStructure({ data }: iAppProps) {
                 // maintain the open state of chapters
                 // if the chapter was open before, keep it open
                 // if it was closed, keep it closed
-                isOpen: prevItems.find((item) => item.id === chapter.id)?.isOpen ?? true, 
+                isOpen: prevItems.find((item) => item.id === chapter.id)?.isOpen ?? true,
 
                 lessons: chapter.lessons.map((lesson) => ({
                     id: lesson.id,
@@ -343,9 +343,10 @@ export function CourseStructure({ data }: iAppProps) {
                                                         ))}
                                                     </SortableContext>
                                                     <div className="p-2">
-                                                        <Button variant="outline" className="w-full">
-                                                            Create New Lesson
-                                                        </Button>
+                                                        <NewLessonModal
+                                                            chapterId={item.id}
+                                                            courseId={data.id}
+                                                        />
                                                     </div>
                                                 </div>
                                             </CollapsibleContent>
