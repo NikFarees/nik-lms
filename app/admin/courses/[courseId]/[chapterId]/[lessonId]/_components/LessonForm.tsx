@@ -7,11 +7,15 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { tryCatch } from "@/hooks/try-catch";
 import { lessonSchema, LessonSchemaType } from "@/lib/zodSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { updateLesson } from "../actions";
+import { toast } from "sonner";
 
 interface iAppProps {
     data: AdminLessonType;
@@ -20,6 +24,8 @@ interface iAppProps {
 }
 
 export function LessonForm({ chapterId, data, courseId }: iAppProps) {
+    const [pending, startTransition] = useTransition();
+
     // 1. Define your form.
     const form = useForm<LessonSchemaType>({
         resolver: zodResolver(lessonSchema) as any,
@@ -32,6 +38,25 @@ export function LessonForm({ chapterId, data, courseId }: iAppProps) {
             thumbnailKey: data.thumbnailKey ?? undefined,
         },
     });
+
+    // 2. Define a submit handler.
+    function onSubmit(values: LessonSchemaType) {
+        startTransition(async () => {
+            const { data: result, error } = await tryCatch(updateLesson(values, data.id));
+
+            if (error) {
+                toast.error("An unexpected error occurred. Please try again.");
+                return
+            }
+
+            if (result.status === "success") {
+                toast.success(result.message);
+            } else if (result.status === "error") {
+                toast.error(result.message);
+            }
+        });
+    }
+
     return (
         <div>
             <Link className={buttonVariants({ variant: 'outline', className: "mb-6" })} href={`/admin/courses/${courseId}/edit`}>
@@ -47,7 +72,7 @@ export function LessonForm({ chapterId, data, courseId }: iAppProps) {
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form className="space-y-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -81,7 +106,7 @@ export function LessonForm({ chapterId, data, courseId }: iAppProps) {
                                     <FormItem>
                                         <FormLabel>Thumbnail Image</FormLabel>
                                         <FormControl>
-                                            <Uploader onChange={field.onChange} value={field.value} fileTypeAccepted="image"/>
+                                            <Uploader onChange={field.onChange} value={field.value} fileTypeAccepted="image" />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -94,17 +119,16 @@ export function LessonForm({ chapterId, data, courseId }: iAppProps) {
                                     <FormItem>
                                         <FormLabel>Video File</FormLabel>
                                         <FormControl>
-                                            <Uploader onChange={field.onChange} value={field.value} fileTypeAccepted="video"/>
+                                            <Uploader onChange={field.onChange} value={field.value} fileTypeAccepted="video" />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">
-                                Save Lesson
+                            <Button disabled={pending} type="submit">
+                                {pending ? "Saving..." : "Save Lesson"}
                             </Button>
                         </form>
-
                     </Form>
                 </CardContent>
             </Card>
