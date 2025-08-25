@@ -1,5 +1,6 @@
 import { getAllCourses } from "@/app/data/course/get-all-courses";
-import { PublicCourseCard } from "../_components/PublicCourseCard";
+import { PublicCourseCard, PublicCourseCardSkeleton } from "../_components/PublicCourseCard";
+import { Suspense } from "react";
 
 export default function PublicCoursesroute() {
     return (
@@ -12,20 +13,32 @@ export default function PublicCoursesroute() {
                     Discover our wide range of courses designed to help you achieve your learning goals.
                 </p>
             </div>
-
-            <RenderCourses />
+            <Suspense fallback={<LoadingSkeletonLayout />}>
+                <RenderCourses />
+            </Suspense>
         </div>
     );
 }
 
-async function RenderCourses () {
+async function RenderCourses() {
     const courses = await getAllCourses();
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
                 <PublicCourseCard key={course.id} data={course} />
-            ))}      
+            ))}
         </div>
     )
+}
+
+function LoadingSkeletonLayout() {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 9 }).map((_, index) => (
+                <PublicCourseCardSkeleton key={index} />
+            ))}
+        </div>
+    );
+
 }
