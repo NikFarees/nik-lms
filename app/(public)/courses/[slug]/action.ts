@@ -136,7 +136,7 @@ export async function enrollInCourseAction(courseId: string): Promise<ApiRespons
                 customer: stripeCustomerId,
                 line_items: [
                     {
-                        price: "price_1S0PeRRrfphJrSDilB40SYjI",
+                        price: "price_1S12Nm2MiJBTHvRpkD8K9BRD", 
                         quantity: 1,
                     },
                 ],
