@@ -11,6 +11,7 @@ import Image from "next/image";
 import { checkIfCourseBought } from "@/app/data/user/user-is-enrolled";
 import Link from "next/link";
 import { EnrollmentButton } from "./_components/EnrollmentButton";
+import { buttonVariants } from "@/components/ui/button";
 
 type Params = Promise<{ slug: string }>
 
@@ -246,7 +247,7 @@ export default async function SlugPage({ params }: { params: Params }) {
                             {isEnrolled ? (
                                 <Link
                                     href="/dashboard"
-                                    className="w-full"
+                                    className={buttonVariants({className: "w-full"})}
                                 >
                                     Watch Course
                                 </Link>
