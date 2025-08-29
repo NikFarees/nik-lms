@@ -61,18 +61,28 @@ const chartConfig = {
 
 } satisfies ChartConfig
 
-export function ChartAreaInteractive() {
+interface ChartAreaInteractiveProps {
+  data: { date: string; enrollments: number }[];
+}
 
+
+export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
+
+  const totalEnrollmentsNumber = React.useMemo(
+    () => data.reduce((acc, curr) => acc + curr.enrollments, 0),
+    [data]
+  )
+  
   return (
     <Card className="@container/card">
       <CardHeader>
         <CardTitle>Total Enrollments</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total enrollment for the last 30 days: 1200
+            Total enrollment for the last 30 days: {totalEnrollmentsNumber}
           </span>
           <span className="@[540px]/card:hidden">
-            Last 30 days: 1200
+            Last 30 days: {totalEnrollmentsNumber}
           </span>
         </CardDescription>
       </CardHeader>
@@ -82,7 +92,7 @@ export function ChartAreaInteractive() {
           className="aspect-auto h-[250px] w-full"
         >
           <BarChart
-            data={dummyEnrollmentsData}
+            data={data}
             margin={{
               left: 12,
               right: 12,
